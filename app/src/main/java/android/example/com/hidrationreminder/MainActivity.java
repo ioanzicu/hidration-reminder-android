@@ -1,6 +1,9 @@
 package android.example.com.hidrationreminder;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.example.com.hidrationreminder.sync.ReminderTasks;
+import android.example.com.hidrationreminder.sync.WaterReminderIntentService;
 import android.example.com.hidrationreminder.utilities.PreferenceUtilities;
 import android.preference.PreferenceManager;
 import android.view.View;
@@ -24,9 +27,9 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
 
         /** Get the views **/
-        mWaterCountDisplay = (TextView) findViewById(R.id.tv_water_count);
-        mChargingCountDisplay = (TextView) findViewById(R.id.tv_charging_reminder_count);
-        mChargingImageView = (ImageView) findViewById(R.id.iv_power_increment);
+        mWaterCountDisplay = findViewById(R.id.tv_water_count);
+        mChargingCountDisplay = findViewById(R.id.tv_charging_reminder_count);
+        mChargingImageView = findViewById(R.id.iv_power_increment);
 
         /** Set the original values in the UI **/
         updateWaterCount();
@@ -63,9 +66,10 @@ public class MainActivity extends AppCompatActivity implements
         if (mToast != null) mToast.cancel();
         mToast = Toast.makeText(this, R.string.water_chug_toast, Toast.LENGTH_SHORT);
         mToast.show();
-        // TODO (15) Create an explicit intent for WaterReminderIntentService
-        // TODO (16) Set the action of the intent to ACTION_INCREMENT_WATER_COUNT
-        // TODO (17) Call startService and pass the explicit intent you just created
+
+        Intent incrementWaterCountIntent = new Intent(this, WaterReminderIntentService.class);
+        incrementWaterCountIntent.setAction(ReminderTasks.ACTION_INCREMENT_WATER_COUNT);
+        startService(incrementWaterCountIntent);
     }
 
     @Override

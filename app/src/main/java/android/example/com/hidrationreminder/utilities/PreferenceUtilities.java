@@ -1,6 +1,5 @@
 package android.example.com.hidrationreminder.utilities;
 
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
