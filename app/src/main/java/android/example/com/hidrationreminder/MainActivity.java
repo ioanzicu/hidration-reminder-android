@@ -1,7 +1,6 @@
 package android.example.com.hidrationreminder;
 
-import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.*;
 import android.example.com.hidrationreminder.sync.ReminderTasks;
 import android.example.com.hidrationreminder.sync.WaterReminderIntentService;
 import android.example.com.hidrationreminder.utilities.NotificationUtils;
@@ -22,6 +21,8 @@ public class MainActivity extends AppCompatActivity implements
     private ImageView mChargingImageView;
 
     private Toast mToast;
+    IntentFilter mChargingIntentFilter;
+    ChargingBroadcastReceiver mChargingReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +43,24 @@ public class MainActivity extends AppCompatActivity implements
         /** Setup the shared preference listener **/
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.registerOnSharedPreferenceChangeListener(this);
+
+        mChargingIntentFilter = new IntentFilter();
+        mChargingIntentFilter.addAction(Intent.ACTION_POWER_CONNECTED);
+        mChargingIntentFilter.addAction(Intent.ACTION_POWER_DISCONNECTED);
+
+        mChargingReceiver = new ChargingBroadcastReceiver();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(mChargingReceiver, mChargingIntentFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(mChargingReceiver);
     }
 
     /**
@@ -61,6 +80,14 @@ public class MainActivity extends AppCompatActivity implements
                 R.plurals.charge_notification_count, chargingReminders, chargingReminders);
         mChargingCountDisplay.setText(formattedChargingReminders);
 
+    }
+
+    private void showCharging(boolean isCharging) {
+        if (isCharging) {
+            mChargingImageView.setImageResource(R.drawable.ic_power_pink_80px);
+        } else {
+            mChargingImageView.setImageResource(R.drawable.ic_power_grey_80px);
+        }
     }
 
     /**
@@ -94,6 +121,16 @@ public class MainActivity extends AppCompatActivity implements
             updateWaterCount();
         } else if (PreferenceUtilities.KEY_CHARGING_REMINDER_COUNT.equals(key)) {
             updateChargingReminderCount();
+        }
+    }
+
+    private class ChargingBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            boolean isCharging = action.equals(Intent.ACTION_POWER_CONNECTED);
+            showCharging(isCharging);
         }
     }
 }
