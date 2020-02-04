@@ -6,6 +6,7 @@ import android.example.com.hidrationreminder.sync.ReminderTasks;
 import android.example.com.hidrationreminder.sync.WaterReminderIntentService;
 import android.example.com.hidrationreminder.utilities.NotificationUtils;
 import android.example.com.hidrationreminder.utilities.PreferenceUtilities;
+import android.example.com.hidrationreminder.utilities.ReminderUtilities;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.ImageView;
@@ -35,6 +36,8 @@ public class MainActivity extends AppCompatActivity implements
         /** Set the original values in the UI **/
         updateWaterCount();
         updateChargingReminderCount();
+
+        ReminderUtilities.scheduleChargingReminder(this);
 
         /** Setup the shared preference listener **/
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -92,9 +95,5 @@ public class MainActivity extends AppCompatActivity implements
         } else if (PreferenceUtilities.KEY_CHARGING_REMINDER_COUNT.equals(key)) {
             updateChargingReminderCount();
         }
-    }
-
-    public void testNotification(View view) {
-        NotificationUtils.remindUserBecauseCharging(this);
     }
 }
