@@ -6,6 +6,8 @@ import android.example.com.hidrationreminder.sync.WaterReminderIntentService;
 import android.example.com.hidrationreminder.utilities.NotificationUtils;
 import android.example.com.hidrationreminder.utilities.PreferenceUtilities;
 import android.example.com.hidrationreminder.utilities.ReminderUtilities;
+import android.os.BatteryManager;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.ImageView;
@@ -23,6 +25,7 @@ public class MainActivity extends AppCompatActivity implements
     private Toast mToast;
     IntentFilter mChargingIntentFilter;
     ChargingBroadcastReceiver mChargingReceiver;
+    private static boolean isCharging;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,11 +58,41 @@ public class MainActivity extends AppCompatActivity implements
     protected void onResume() {
         super.onResume();
         registerReceiver(mChargingReceiver, mChargingIntentFilter);
+
+        /** Determine the current charging state **/
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
+            BatteryManager batteryManager = (BatteryManager) getSystemService(BATTERY_SERVICE);
+            isCharging = batteryManager.isCharging();
+
+        } else {
+
+            // For old phones, OS versions
+            // sticky broadcast that contains a lot of information about the battery state.
+            IntentFilter intentFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+            // for the receiver. Pass in your intent filter as well. Passing in null means that you're
+            // getting the current state of a sticky broadcast - the intent returned will contain the
+            // battery information you need.
+            Intent currentBatteryStatusIntent = this.registerReceiver(null, intentFilter);
+            // BatteryManager.BATTERY_STATUS_CHARGING or BatteryManager.BATTERY_STATUS_FULL. This means
+            // the battery is currently charging.
+            int batteryStatus = currentBatteryStatusIntent.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
+
+            isCharging = batteryStatus == BatteryManager.BATTERY_STATUS_CHARGING ||
+                    batteryStatus == BatteryManager.BATTERY_STATUS_FULL;
+        }
+
+        // charging method
+        showCharging(isCharging);
+
+        /** Register the receiver for future state changes **/
+        registerReceiver(mChargingReceiver, mChargingIntentFilter);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        /** Unregister the receiver **/
         unregisterReceiver(mChargingReceiver);
     }
 
