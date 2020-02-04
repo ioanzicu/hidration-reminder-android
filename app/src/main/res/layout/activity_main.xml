@@ -13,7 +13,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="@string/instructions" />
+            android:text="@string/instructions"/>
 
     <FrameLayout
             android:id="@+id/fl_water_increment"
@@ -30,7 +30,7 @@
                 android:onClick="incrementWater"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_local_drink_grey_120px" />
+                android:src="@drawable/ic_local_drink_grey_120px"/>
 
         <LinearLayout
                 android:layout_width="match_parent"
@@ -42,7 +42,7 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:layout_weight="64"
-                    android:visibility="invisible" />
+                    android:visibility="invisible"/>
 
             <TextView
                     android:id="@+id/tv_water_count"
@@ -51,13 +51,13 @@
                     android:layout_gravity="center"
                     android:text="@string/default_water_count"
                     android:textColor="#424242"
-                    android:textSize="35sp" />
+                    android:textSize="35sp"/>
 
             <View
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:layout_weight="36"
-                    android:visibility="invisible" />
+                    android:visibility="invisible"/>
         </LinearLayout>
     </FrameLayout>
 
@@ -71,7 +71,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/charging_plug_content_desc"
-                android:src="@drawable/ic_power_grey_80px" />
+                android:src="@drawable/ic_power_grey_80px"/>
 
         <TextView
                 android:id="@+id/tv_charging_reminder_count"
@@ -82,7 +82,15 @@
                 android:layout_marginRight="16dp"
                 android:layout_toEndOf="@id/iv_power_increment"
                 android:layout_toRightOf="@id/iv_power_increment"
-                android:text="@string/default_charge_notification_count" />
+                android:text="@string/default_charge_notification_count"/>
 
     </RelativeLayout>
+
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:onClick="testNotification"
+            android:text="Test Notification"/>
+
 </LinearLayout>
